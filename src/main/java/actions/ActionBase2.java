@@ -19,7 +19,7 @@ import constants.PropertyConst;
  * 各Actionクラスの親クラス。共通処理を行う。
  *
  */
-public abstract class ActionBase {
+public abstract class ActionBase2 {
     protected ServletContext context;
     protected HttpServletRequest request;
     protected HttpServletResponse response;
