@@ -15,7 +15,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-    <title><c:out value="日報管理システム" /></title>
+    <title><c:out value="日報勤怠管理システム" /></title>
     <link rel="stylesheet" href="<c:url value='/css/reset.css' />">
     <link rel="stylesheet" href="<c:url value='/css/style.css' />">
 </head>
@@ -23,12 +23,14 @@
     <div id="wrapper">
         <div id="header">
             <div id="header_menu">
-                <h1><a href="<c:url value='/?action=${actTop}&command=${commIdx}' />">日報管理システム</a></h1>&nbsp;&nbsp;&nbsp;
+                <h1><a href="<c:url value='/?action=${actTop}&command=${commIdx}' />">日報勤怠管理システム</a></h1>&nbsp;&nbsp;&nbsp;
                 <c:if test="${sessionScope.login_employee != null}">
                     <c:if test="${sessionScope.login_employee.adminFlag == AttributeConst.ROLE_ADMIN.getIntegerValue()}">
                         <a href="<c:url value='?action=${actEmp}&command=${commIdx}' />">従業員管理</a>&nbsp;
                     </c:if>
                     <a href="<c:url value='?action=${actRep}&command=${commIdx}' />">日報管理</a>&nbsp;
+                    <a href="<c:url value='?action=${actRep}&command=${commIdx}' />">勤怠管理</a>&nbsp;
+
                 </c:if>
             </div>
             <c:if test="${sessionScope.login_employee != null}">
