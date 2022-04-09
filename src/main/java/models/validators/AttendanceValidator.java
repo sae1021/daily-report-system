@@ -1,9 +1,5 @@
 package models.validators;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import actions.views.AttendanceView;
 import constants.MessageConst;
 
@@ -13,53 +9,32 @@ import constants.MessageConst;
 public class AttendanceValidator {
 
     /**
-     * 勤怠インスタンスの各項目についてバリデーションを行う
-     * @param av 勤怠インスタンス
-     * @return エラーのリスト
+     * 前回勤怠データに 出勤記録あり かつ 退勤記録なし の場合（未退勤状態）エラーメッセージを返却
+     * @param av 前回勤怠データ
+     * @return エラーメッセージ
      */
-    public static List<String> validate(AttendanceView av) {
-        List<String> errors = new ArrayList<String>();
-
-        //出勤のチェック
-        String attendError = validateAttend(av.getAttendAt());
-        if (!attendError.equals("")) {
-            errors.add(attendError);
+    public static String validateStartTime(AttendanceView av) {
+        String result = "";
+        if (av.getAttendAt() != null && av.getLeaveAt() == null) {
+            result = MessageConst.E_NOLEAVE.getMessage();
         }
-
-        //退勤のチェック
-        String leaveError = validateLeave(av.getLeaveAt());
-        if (!leaveError.equals("")) {
-            errors.add(leaveError);
-        }
-
-        return errors;
+        // 前回勤怠データ退勤済み状態なのでエラーなし
+        return result;
     }
 
     /**
-     * 出勤時間に入力値があるかをチェックし、すでに入力されていればエラーメッセージを返却
-     * @param attendAt 出勤時間
+     * 前回勤怠データがない　または　前回勤怠データに 出勤記録なし の場合（未出勤状態）エラーメッセージを返却
+     * @param av 前回勤怠データ
      * @return エラーメッセージ
      */
-    private static String validateAttend(LocalDateTime attendAt) {
-        if (attendAt == null || attendAt.equals("")) {
-            return MessageConst.E_NOATTEND.getMessage();
+    public static String validateEndTime(AttendanceView av) {
+        String result = "";
+        if (av.getId() == null || av.getLeaveAt() != null) {
+            result = MessageConst.E_NOATTEND.getMessage();
         }
 
-        //入力値がある場合は空文字を返却
-        return "";
+        // 前回勤怠データ出勤済み状態なのでエラーなし
+        return result;
     }
 
-    /**
-     * 退勤時間に入力値があるかをチェックし、すでに入力されていればエラーメッセージを返却
-     * @param leaveAt 退勤時間
-     * @return エラーメッセージ
-     */
-    private static String validateLeave(LocalDateTime leaveAt) {
-        if (leaveAt == null || leaveAt.equals("")) {
-            return MessageConst.E_NOLEAVE.getMessage();
-        }
-
-        //入力値がある場合は空文字を返却
-        return "";
-    }
 }
