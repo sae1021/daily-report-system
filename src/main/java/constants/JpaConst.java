@@ -86,17 +86,17 @@ public interface JpaConst {
     String Q_REP_COUNT_ALL_MINE = ENTITY_REP + ".countAllMine";
     String Q_REP_COUNT_ALL_MINE_DEF = "SELECT COUNT(r) FROM Report AS r WHERE r.employee = :" + JPQL_PARM_EMPLOYEE;
 
-    //全てのをidの降順に取得する
+    //全ての勤怠をidの降順に取得する
     String Q_ATT_GET_ALL = ENTITY_ATT + ".getAll";
-    String Q_ATT_GET_ALL_DEF = "SELECT a FROM Report AS a ORDER BY a.id DESC";
+    String Q_ATT_GET_ALL_DEF = "SELECT a FROM Attendance AS a ORDER BY a.id DESC";
     //全ての勤怠の件数を取得する
     String Q_ATT_COUNT = ENTITY_ATT + ".count";
-    String Q_ATT_COUNT_DEF = "SELECT COUNT(a) FROM Report AS a";
+    String Q_ATT_COUNT_DEF = "SELECT COUNT(a) FROM Attendance AS a";
     //指定した従業員が作成した勤怠を全件idの降順で取得する
     String Q_ATT_GET_ALL_MINE = ENTITY_ATT + ".getAllMine";
-    String Q_ATT_GET_ALL_MINE_DEF = "SELECT a FROM Report AS a WHERE a.employee = :" + JPQL_PARM_EMPLOYEE + " ORDER BY a.id DESC";
+    String Q_ATT_GET_ALL_MINE_DEF = "SELECT a FROM Attendance AS a WHERE a.employee = :" + JPQL_PARM_EMPLOYEE + " ORDER BY a.id DESC";
     //指定した従業員が作成した勤怠の件数を取得する
     String Q_ATT_COUNT_ALL_MINE = ENTITY_ATT + ".countAllMine";
-    String Q_ATT_COUNT_ALL_MINE_DEF = "SELECT COUNT(a) FROM Report AS a WHERE a.employee = :" + JPQL_PARM_EMPLOYEE;
+    String Q_ATT_COUNT_ALL_MINE_DEF = "SELECT COUNT(a) FROM Attendance AS a WHERE a.employee = :" + JPQL_PARM_EMPLOYEE;
 }
 
