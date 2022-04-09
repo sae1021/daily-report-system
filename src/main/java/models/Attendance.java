@@ -77,7 +77,7 @@ public class Attendance {
     /**
      * 退勤時間
      */
-    @Column(name = JpaConst.ATT_COL_LEAVE_AT, nullable = false)
+    @Column(name = JpaConst.ATT_COL_LEAVE_AT, nullable = true)
     private LocalDateTime leaveAt;
 
     }
