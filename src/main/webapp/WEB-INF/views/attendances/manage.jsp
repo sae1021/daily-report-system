@@ -11,16 +11,16 @@
 
 <c:import url="/WEB-INF/views/layout/app.jsp">
     <c:param name="content">
-    	<c:if test="${errors != null}">
-		    <div id="flush_error">
-		        エラーがあります。<br />
-		        <c:forEach var="error" items="${errors}">
-		            ・<c:out value="${error}" />
-		            <br />
-		        </c:forEach>
-		
-		    </div>
-		</c:if>
+        <c:if test="${errors != null}">
+            <div id="flush_error">
+                エラーがあります。<br />
+                <c:forEach var="error" items="${errors}">
+                    ・<c:out value="${error}" />
+                    <br />
+                </c:forEach>
+
+            </div>
+        </c:if>
         <c:if test="${flush != null}">
             <div id="flush_success">
                 <c:out value="${flush}"></c:out>
@@ -28,23 +28,25 @@
         </c:if>
         <h2>勤怠管理ページ</h2>
         <p>
-	        <a href="<c:url value='?action=${actAtt}&command=${commIdx}' />">勤怠一覧</a>
+            <a href="<c:url value='?action=${actAtt}&command=${commIdx}' />">勤怠一覧画面</a>
         </p>
         <table class="buttonBox">
-	        <tr>
-		        <td>
-		        	<div class="box whitebase">
-		        		<p>出勤</p>
-						<a class="link" href="<c:url value='?action=${actAtt}&command=${commIn}' />"></a>
-					</div>
-				</td>
-		        <td>
-		        	<div class="box blackbase">
-		        		<p>退勤</p>
-						<a class="link" href="<c:url value='?action=${actAtt}&command=${commOut}' />"></a>
-					</div>
-				</td>
-	        </tr>
+            <tr>
+                <td>
+                    <div class="box whitebase">
+                        <p>出勤</p>
+                        <a class="link"
+                            href="<c:url value='?action=${actAtt}&command=${commIn}' />"></a>
+                    </div>
+                </td>
+                <td>
+                    <div class="box blackbase">
+                        <p>退勤</p>
+                        <a class="link"
+                            href="<c:url value='?action=${actAtt}&command=${commOut}' />"></a>
+                    </div>
+                </td>
+            </tr>
         </table>
 
     </c:param>

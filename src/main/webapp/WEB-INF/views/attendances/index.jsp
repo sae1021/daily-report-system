@@ -19,9 +19,6 @@
         </c:if>
 
         <h2>勤怠 一覧</h2>
-                <p>
-               <a href="<c:url value='?action=${actAtt}&command=${commMng}' />">出退勤画面</a>
-        </p>
         <table id="attendance_list">
             <tbody>
                 <tr class="row_header">
@@ -30,15 +27,23 @@
                     <th class="attend_at">出勤時間</th>
                     <th class="leave_at">退勤時間</th>
                 </tr>
-                <c:forEach var="attendance" items="${attendances}" varStatus="status">
-                    <fmt:parseDate value="${attendance.attendanceDate}" pattern="yyyy-MM-dd" var="attendanceDay" type="date" />
-                    <fmt:parseDate value="${attendance.attendAt}" pattern="yyyy-MM-dd'T'HH:mm" var="attendAt" type="both"/>
-                    <fmt:parseDate value="${attendance.leaveAt}" pattern="yyyy-MM-dd'T'HH:mm" var="leaveAt" type="both"/>
+                <c:forEach var="attendance" items="${attendances}"
+                    varStatus="status">
+                    <fmt:parseDate value="${attendance.attendanceDate}"
+                        pattern="yyyy-MM-dd" var="attendanceDay" type="date" />
+                    <fmt:parseDate value="${attendance.attendAt}"
+                        pattern="yyyy-MM-dd'T'HH:mm" var="attendAt" type="both" />
+                    <fmt:parseDate value="${attendance.leaveAt}"
+                        pattern="yyyy-MM-dd'T'HH:mm" var="leaveAt" type="both" />
                     <tr class="row${status.count % 2}">
-                        <td class="attendance_name"><c:out value="${attendance.employee.name}" /></td>
-                        <td class="attendance_date"><fmt:formatDate value='${attendanceDay}' pattern='yyyy-MM-dd' /></td>
-                        <td class="attend_at"><fmt:formatDate value="${attendAt}" pattern="HH:mm" /></td>
-                        <td class="leave_at"><fmt:formatDate value="${leaveAt}" pattern="HH:mm" /></td>
+                        <td class="attendance_name"><c:out
+                                value="${attendance.employee.name}" /></td>
+                        <td class="attendance_date"><fmt:formatDate
+                                value='${attendanceDay}' pattern='yyyy-MM-dd' /></td>
+                        <td class="attend_at"><fmt:formatDate value="${attendAt}"
+                                pattern="HH:mm" /></td>
+                        <td class="leave_at"><fmt:formatDate value="${leaveAt}"
+                                pattern="HH:mm" /></td>
                     </tr>
                 </c:forEach>
             </tbody>
@@ -60,7 +65,9 @@
                 </c:choose>
             </c:forEach>
         </div>
-
+        <p>
+            <a href="<c:url value='?action=${actAtt}&command=${commMng}' />">出退勤画面に戻る</a>
+        </p>
 
     </c:param>
 </c:import>
