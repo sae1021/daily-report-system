@@ -27,12 +27,12 @@ public class AttendanceAction extends ActionBase {
      */
     @Override
     public void process() throws ServletException, IOException {
-
+    	
         service = new AttendanceService();
 
         //メソッドを実行
         invoke();
-
+        
         service.close();
     }
 
@@ -100,25 +100,25 @@ public class AttendanceAction extends ActionBase {
 
         // 勤怠情報登録
         List<String> errors = service.create(av);
-        if (errors.size() > 0) {
-            // 登録中にエラーがあった場合
-
-            putRequestScope(AttributeConst.ERR, errors);// エラーのリスト
-
-            // 勤怠管理画面を再表示
-            forward(ForwardConst.FW_ATT_MANAGE);
-
-        } else {
-            //登録中にエラーがなかった場合
-
-            //セッションに登録完了のフラッシュメッセージを設定
-            putSessionScope(AttributeConst.FLUSH, MessageConst.I_REGISTERED.getMessage());
-
-            //一覧画面にリダイレクト
-            redirect(ForwardConst.ACT_ATT, ForwardConst.CMD_INDEX);
-        }
+	    if (errors.size() > 0) {
+	        // 登録中にエラーがあった場合
+	
+	        putRequestScope(AttributeConst.ERR, errors);// エラーのリスト
+	
+	        // 勤怠管理画面を再表示
+	        forward(ForwardConst.FW_ATT_MANAGE);
+	
+	    } else {
+	        //登録中にエラーがなかった場合
+	
+	        //セッションに登録完了のフラッシュメッセージを設定
+	        putSessionScope(AttributeConst.FLUSH, MessageConst.I_REGISTERED.getMessage());
+	
+	        //一覧画面にリダイレクト
+	        redirect(ForwardConst.ACT_ATT, ForwardConst.CMD_INDEX);
+	    }
     }
-
+    
     /**
      * 退勤登録を行う
      * @throws ServletException
@@ -126,30 +126,30 @@ public class AttendanceAction extends ActionBase {
      *
      **/
     public void entryOut() throws ServletException, IOException {
-
-        // セッションからログイン中の従業員情報を取得
-        EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
-
+    	
+		// セッションからログイン中の従業員情報を取得
+		EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
+		
         // 前回の勤怠入力情報を取得
-        AttendanceView av = service.findPrev(ev);
+		AttendanceView av = service.findPrev(ev);
 
-        List<String> errors = service.update(av);
-        if (errors.size() > 0) {
-            // 登録中にエラーがあった場合
-
-            putRequestScope(AttributeConst.ERR, errors);// エラーのリスト
-
-            // 勤怠管理画面を再表示
-            forward(ForwardConst.FW_ATT_MANAGE);
-
-        } else {
-            //登録中にエラーがなかった場合
-
-            //セッションに登録完了のフラッシュメッセージを設定
-            putSessionScope(AttributeConst.FLUSH, MessageConst.I_REGISTERED.getMessage());
-
-            //一覧画面にリダイレクト
-            redirect(ForwardConst.ACT_ATT, ForwardConst.CMD_INDEX);
-        }
-    }
+		List<String> errors = service.update(av);
+	    if (errors.size() > 0) {
+	        // 登録中にエラーがあった場合
+	
+	        putRequestScope(AttributeConst.ERR, errors);// エラーのリスト
+	
+	        // 勤怠管理画面を再表示
+	        forward(ForwardConst.FW_ATT_MANAGE);
+	
+	    } else {
+	        //登録中にエラーがなかった場合
+	
+	        //セッションに登録完了のフラッシュメッセージを設定
+	        putSessionScope(AttributeConst.FLUSH, MessageConst.I_REGISTERED.getMessage());
+	
+	        //一覧画面にリダイレクト
+	        redirect(ForwardConst.ACT_ATT, ForwardConst.CMD_INDEX);
+	    }
+	}
 }

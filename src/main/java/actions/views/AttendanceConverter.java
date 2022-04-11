@@ -43,7 +43,7 @@ public class AttendanceConverter {
                 a.getAttendAt(),
                 a.getLeaveAt());
     }
-
+    
     /**
      * DTOモデルのリストからViewモデルのリストを作成する
      * @param list DTOモデルのリスト
