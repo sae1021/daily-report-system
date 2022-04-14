@@ -158,6 +158,75 @@ table#report_list .report_action {
     width: 13%;
 }
 
+table#report_list th {
+    font-weight: bold;
+    padding: 10px 2%;
+}
+
+table#attendamce_list .attendance_name {
+    width: 20%;
+    padding: 10px 2%;
+}
+table#attendance_list .attendance_date {
+    width: 20%;
+}
+
+table#attendance_list .attend_at {
+    width: 30%;
+}
+
+table#attendance_list .leave_at {
+    width: 30%;
+}
+
+#attendance_list tr.row_header {
+	background-color: #333333;
+	color: #cccccc;
+}
+
+table.buttonBox{
+  border: 0px none;
+  width:40%;
+  margin:auto;
+}
+table.buttonBox tr{
+  border: 0px none;
+}
+table.buttonBox td{
+  border: 0px none;
+}
+
+
+.box{
+  width:100%;
+  height:100%;
+  border-radius:30px;
+  border: 2px solid #000000;
+  position:relative;
+  text-align:center;
+  margin-left: auto;
+  margin-right: auto;
+}
+.whitebase{
+  background:white;
+  color:black;
+}
+.blackbase{
+  background:black;
+  color:white;
+}
+.box p{
+	font-size: 3em;
+}
+.box .link{
+	display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 pre {
     font-family: "Hiragino Kaku Gothic Pro", Meiryo, "MS PGothic", Helvetica,
         Arial, sans-serif;

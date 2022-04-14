@@ -7,6 +7,7 @@
 <c:set var="actEmp" value="${ForwardConst.ACT_EMP.getValue()}" />
 <c:set var="actRep" value="${ForwardConst.ACT_REP.getValue()}" />
 <c:set var="actAuth" value="${ForwardConst.ACT_AUTH.getValue()}" />
+<c:set var="actAtt" value="${ForwardConst.ACT_ATT.getValue()}" />
 
 <c:set var="commIdx" value="${ForwardConst.CMD_INDEX.getValue()}" />
 <c:set var="commOut" value="${ForwardConst.CMD_LOGOUT.getValue()}" />
@@ -29,7 +30,7 @@
                         <a href="<c:url value='?action=${actEmp}&command=${commIdx}' />">従業員管理</a>&nbsp;
                     </c:if>
                     <a href="<c:url value='?action=${actRep}&command=${commIdx}' />">日報管理</a>&nbsp;
-                    <a href="<c:url value='?action=${actRep}&command=${commIdx}' />">勤怠管理</a>&nbsp;
+                    <a href="<c:url value='?action=${actAtt}&command=${commIdx}' />">勤怠管理</a>&nbsp;
 
                 </c:if>
             </div>
@@ -42,7 +43,7 @@
             </c:if>
         </div>
         <div id="content">${param.content}</div>
-        <div id="footer">by Taro Kirameki.</div>
+        <div id="footer">by Sae Sonoda.</div>
     </div>
 </body>
 </html>

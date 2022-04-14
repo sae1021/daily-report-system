@@ -1,6 +1,9 @@
 package services;
 
+import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import actions.views.AttendanceConverter;
@@ -17,7 +20,7 @@ import models.validators.AttendanceValidator;
 public class AttendanceService extends ServiceBase {
 
     /**
-     * 指定した従業員が作成した勤怠データを、指定されたページ数の一覧画面に表示する分取得しAttendViewのリストで返却する
+     * 指定した従業員が作成した勤怠データを、指定されたページ数の一覧画面に表示する分取得しAttendanceViewのリストで返却する
      * @param employee 従業員
      * @param page ページ数
      * @return 一覧画面に表示するデータのリスト
@@ -57,6 +60,7 @@ public class AttendanceService extends ServiceBase {
                 .setFirstResult(JpaConst.ROW_PER_PAGE * (page - 1))
                 .setMaxResults(JpaConst.ROW_PER_PAGE)
                 .getResultList();
+        
         return AttendanceConverter.toViewList(attendances);
     }
 
@@ -80,58 +84,101 @@ public class AttendanceService extends ServiceBase {
     }
 
     /**
-     * 画面から入力された勤怠の登録内容を元にデータを1件作成し、勤怠テーブルに登録する
+     * 開始時刻のバリデーションチェックを行う
      * @param av 勤怠の登録内容
      * @return バリデーションで発生したエラーのリスト
      */
-    public List<String> create(AttendanceView av) {
-        List<String> errors = AttendanceValidator.validate(av);
-        if (errors.size() == 0) {
-            LocalDateTime ldt = LocalDateTime.now();
-            av.setAttendAt(ldt);
-            av.setLeaveAt(ldt);
-            createInternal(av);
+    public List<String> validateStartTime(AttendanceView av) {
+    	List<String> errors = new ArrayList<String>();
+    	String error = AttendanceValidator.validateStartTime(av);
+        if (!error.equals("")) {
+            errors.add(error);
         }
-
-        //バリデーションで発生したエラーを返却（エラーがなければ0件の空リスト）
-        return errors;
+    	return errors;
     }
 
     /**
-     * 画面から入力された勤怠の登録内容を元に、勤怠データを更新する
-     * @param av 勤怠の更新内容
+     * 終了時刻のバリデーションチェックを行う
+     * @param av 勤怠の登録内容
      * @return バリデーションで発生したエラーのリスト
      */
-    public List<String> update(AttendanceView av) {
-
-        //バリデーションを行う
-        List<String> errors = AttendanceValidator.validate(av);
-
-        if (errors.size() == 0) {
-
-            //更新日時を現在時刻に設定
-            LocalDateTime ldt = LocalDateTime.now();
-            av.setAttendAt(ldt);
-
-            updateInternal(av);
+    public List<String> validateEndTime(AttendanceView av) {
+    	List<String> errors = new ArrayList<String>();
+    	String error = AttendanceValidator.validateEndTime(av);
+        if (!error.equals("")) {
+            errors.add(error);
         }
-
-        //バリデーションで発生したエラーを返却（エラーがなければ0件の空リスト）
-        return errors;
+    	return errors;
+    }
+    
+    /**
+     * 指定した従業員の最新の勤怠情報を取得する
+     * @param ev 従業員情報
+     * @return 取得データのインスタンス
+     */
+    public AttendanceView findPrev(EmployeeView ev) {
+        return AttendanceConverter.toView(findPrevOneInternal(ev));
     }
 
+    /**
+     * 従業員を条件にデータを1件取得する
+     * @param employee
+     * @return 取得データのインスタンス
+     */
+    private Attendance findPrevOneInternal(EmployeeView employee) {
+        // 従業員を条件に前回の登録データを1件取得する
+    	List<Attendance> a = em.createNamedQuery(JpaConst.Q_ATT_GET_ALL_MINE, Attendance.class)
+                .setParameter(JpaConst.JPQL_PARM_EMPLOYEE, EmployeeConverter.toModel(employee))
+                .getResultList();
+		if (a == null || a.size() == 0) {
+			return new Attendance(null, EmployeeConverter.toModel(employee), null, null, null);
+		}
+        return a.get(0);
+    }
+    
     /**
      * idを条件にデータを1件取得する
      * @param id
      * @return 取得データのインスタンス
      */
     private Attendance findOneInternal(int id) {
-        return em.find(Attendance.class, id);
+    	return em.find(Attendance.class, id);
     }
 
     /**
+     * 勤怠時刻データを1件作成し、勤怠テーブルに登録する
+     * @param av 勤怠の登録内容
+     * @return バリデーションで発生したエラーのリスト
+     */
+    public List<String> create(AttendanceView av) {
+
+        //バリデーションを行う
+        List<String> errors = validateStartTime(av);
+        
+        if (errors.size() == 0) {
+        	//　出勤時刻に現在時刻に設定
+            LocalDate day = LocalDate.now();
+            LocalDateTime time = LocalDateTime.now();
+            AttendanceView avNew = new AttendanceView(
+                    // パラメータの値をもとに出勤情報のインスタンスを作成する
+                            null,
+                            av.getEmployee(), // ログインしている従業員を、日報作成者として登録する
+                            day,
+                            time,
+                            null
+                            );
+
+            createInternal(avNew);
+        }
+
+        //バリデーションで発生したエラーを返却（エラーがなければ0件の空リスト）
+        return errors;
+    }
+    
+    /**
      * 勤怠データを1件登録する
      * @param av 勤怠データ
+     * @throws ParseException 
      */
     private void createInternal(AttendanceView av) {
 
@@ -141,6 +188,28 @@ public class AttendanceService extends ServiceBase {
 
     }
 
+    /**
+     * 画面から入力された日報の登録内容を元に、日報データを更新する
+     * @param rv 日報の更新内容
+     * @return バリデーションで発生したエラーのリスト
+     */
+    public List<String> update(AttendanceView av) {
+
+        //バリデーションを行う
+        List<String> errors = validateEndTime(av);
+
+        if (errors.size() == 0) {
+        	//　退勤時刻に現在時刻に設定
+            LocalDateTime ldt = LocalDateTime.now();
+            av.setLeaveAt(ldt);
+
+            updateInternal(av);
+        }
+
+        //バリデーションで発生したエラーを返却（エラーがなければ0件の空リスト）
+        return errors;
+    }
+    
     /**
      * 勤怠データを更新する
      * @param av 勤怠データ

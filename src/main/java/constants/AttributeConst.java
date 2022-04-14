@@ -33,7 +33,10 @@ public enum AttributeConst {
 
     //日報管理
     REPORT("report"), REPORTS("reports"), REP_COUNT("reports_count"), REP_ID("id"), REP_DATE("report_date"), REP_TITLE(
-            "title"), REP_CONTENT("content");
+            "title"), REP_CONTENT("content"),
+
+    //勤怠管理
+    ATTENDANCE("attendance"), ATTENDANCES("attendances"), ATT_COUNT("attendances_count"), ATT_ID("id"), ATTENDANCE_DATE("attendance_date"),ATTEND_AT("attend_at"),LEAVE_AT("leave_at");
 
     private final String text;
     private final Integer i;
