@@ -27,33 +27,51 @@ public class AttendanceAction extends ActionBase {
      */
     @Override
     public void process() throws ServletException, IOException {
-    	
+
         service = new AttendanceService();
 
         //メソッドを実行
         invoke();
-        
+
         service.close();
     }
 
     /**
-     * 一覧画面を表示する
+     * ログインユーザーだけの勤怠一覧画面を表示する
      * @throws ServletException
      * @throws IOException
      **/
 
     public void index() throws ServletException, IOException {
 
-        //指定されたページ数の一覧画面に表示する勤怠データを取得
+      //セッションからログイン中の従業員情報を取得
+        EmployeeView loginEmployee = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
+
+        //ログイン中の従業員が作成した日報データを、指定されたページ数の一覧画面に表示する分取得する
         int page = getPage();
-        List<AttendanceView> attendances = service.getAllPerPage(page);
+        List<AttendanceView> attendances = service.getMinePerPage(loginEmployee, page);
+
+        //ログイン中の従業員が作成した日報データの件数を取得
+        long myAttendancesCount = service.countAllMine(loginEmployee);
+
+        putRequestScope(AttributeConst.ATTENDANCES, attendances); //取得した日報データ
+        putRequestScope(AttributeConst.ATT_COUNT, myAttendancesCount); //ログイン中の従業員が作成した日報の数
+        putRequestScope(AttributeConst.PAGE, page); //ページ数
+        putRequestScope(AttributeConst.MAX_ROW, JpaConst.ROW_PER_PAGE); //1ページに表示するレコードの数
+
+
+        //指定されたページ数の一覧画面に表示する全従業員の勤怠データを取得
+        //管理者かどうかのチェック
+        if (checkAdmin()) {
+        int page1 = getPage();
+        List<AttendanceView> attendances1 = service.getAllPerPage(page1);
 
         //全勤怠データの件数を取得
         long attendancesCount = service.countAll();
 
-        putRequestScope(AttributeConst.ATTENDANCES, attendances); //取得した勤怠データ
+        putRequestScope(AttributeConst.ATTENDANCES, attendances1); //取得した勤怠データ
         putRequestScope(AttributeConst.ATT_COUNT, attendancesCount); //全ての勤怠データの件数
-        putRequestScope(AttributeConst.PAGE, page); //ページ数
+        putRequestScope(AttributeConst.PAGE, page1); //ページ数
         putRequestScope(AttributeConst.MAX_ROW, JpaConst.ROW_PER_PAGE); //1ページに表示するレコードの数
 
         //セッションにフラッシュメッセージが設定されている場合はリクエストスコープに移し替え、セッションからは削除する
@@ -65,6 +83,7 @@ public class AttendanceAction extends ActionBase {
 
         //一覧画面を表示
         forward(ForwardConst.FW_ATT_INDEX);
+        }
     }
 
     /**
@@ -100,25 +119,25 @@ public class AttendanceAction extends ActionBase {
 
         // 勤怠情報登録
         List<String> errors = service.create(av);
-	    if (errors.size() > 0) {
-	        // 登録中にエラーがあった場合
-	
-	        putRequestScope(AttributeConst.ERR, errors);// エラーのリスト
-	
-	        // 勤怠管理画面を再表示
-	        forward(ForwardConst.FW_ATT_MANAGE);
-	
-	    } else {
-	        //登録中にエラーがなかった場合
-	
-	        //セッションに登録完了のフラッシュメッセージを設定
-	        putSessionScope(AttributeConst.FLUSH, MessageConst.I_REGISTERED.getMessage());
-	
-	        //一覧画面にリダイレクト
-	        redirect(ForwardConst.ACT_ATT, ForwardConst.CMD_INDEX);
-	    }
+        if (errors.size() > 0) {
+            // 登録中にエラーがあった場合
+
+            putRequestScope(AttributeConst.ERR, errors);// エラーのリスト
+
+            // 勤怠管理画面を再表示
+            forward(ForwardConst.FW_ATT_MANAGE);
+
+        } else {
+            //登録中にエラーがなかった場合
+
+            //セッションに登録完了のフラッシュメッセージを設定
+            putSessionScope(AttributeConst.FLUSH, MessageConst.I_REGISTERED.getMessage());
+
+            //一覧画面にリダイレクト
+            redirect(ForwardConst.ACT_ATT, ForwardConst.CMD_INDEX);
+        }
     }
-    
+
     /**
      * 退勤登録を行う
      * @throws ServletException
@@ -126,30 +145,54 @@ public class AttendanceAction extends ActionBase {
      *
      **/
     public void entryOut() throws ServletException, IOException {
-    	
-		// セッションからログイン中の従業員情報を取得
-		EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
-		
-        // 前回の勤怠入力情報を取得
-		AttendanceView av = service.findPrev(ev);
 
-		List<String> errors = service.update(av);
-	    if (errors.size() > 0) {
-	        // 登録中にエラーがあった場合
-	
-	        putRequestScope(AttributeConst.ERR, errors);// エラーのリスト
-	
-	        // 勤怠管理画面を再表示
-	        forward(ForwardConst.FW_ATT_MANAGE);
-	
-	    } else {
-	        //登録中にエラーがなかった場合
-	
-	        //セッションに登録完了のフラッシュメッセージを設定
-	        putSessionScope(AttributeConst.FLUSH, MessageConst.I_REGISTERED.getMessage());
-	
-	        //一覧画面にリダイレクト
-	        redirect(ForwardConst.ACT_ATT, ForwardConst.CMD_INDEX);
-	    }
-	}
+        // セッションからログイン中の従業員情報を取得
+        EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
+
+        // 前回の勤怠入力情報を取得
+        AttendanceView av = service.findPrev(ev);
+
+        List<String> errors = service.update(av);
+        if (errors.size() > 0) {
+            // 登録中にエラーがあった場合
+
+            putRequestScope(AttributeConst.ERR, errors);// エラーのリスト
+
+            // 勤怠管理画面を再表示
+            forward(ForwardConst.FW_ATT_MANAGE);
+
+        } else {
+            //登録中にエラーがなかった場合
+
+            //セッションに登録完了のフラッシュメッセージを設定
+            putSessionScope(AttributeConst.FLUSH, MessageConst.I_REGISTERED.getMessage());
+
+            //一覧画面にリダイレクト
+            redirect(ForwardConst.ACT_ATT, ForwardConst.CMD_INDEX);
+        }
+    }
+
+    /**
+     * ログイン中の従業員が管理者かどうかチェックし、管理者でなければログインユーザーの勤怠画面だけを表示
+     * true: 管理者 false: 管理者ではない
+     * @throws ServletException
+     * @throws IOException
+     */
+    private boolean checkAdmin() throws ServletException, IOException {
+
+        //セッションからログイン中の従業員情報を取得
+        EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
+
+        //管理者でなければログインユーザーの勤怠だけを表示
+        if (ev.getAdminFlag() != AttributeConst.ROLE_ADMIN.getIntegerValue()) {
+
+            forward(ForwardConst.FW_ATT_INDEX);
+            return false;
+
+        } else {
+
+            return true;
+        }
+
+    }
 }
